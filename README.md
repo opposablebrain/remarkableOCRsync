@@ -36,4 +36,4 @@ If you like it, help me make it better.
 [3]: https://github.com/lucasrla/remarkable-utils "Remarkable Utils"
 
 # Usage
-Try running `./rmocrsync.sh` It might work out of the box.
+From the repo folder, try running `./rmocrsync.sh` It might work out of the box. Good luck.
