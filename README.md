@@ -1,5 +1,5 @@
 # Remarkable tablet sync and page OCR
-A quick hack for syncing notebooks off the Remarkable, converting them to PDF form, and running OCR on the pages. Attempts to only convert changed pages. Uses AWS textract for OCR.
+A quick hack for syncing notebooks off the Remarkable (direct USB transfer), converting them to PDF form, and running OCR on the pages. Attempts to only convert changed pages. Uses AWS textract for OCR.
 
 Loosely tested on Linux and OSX(intel).
 
