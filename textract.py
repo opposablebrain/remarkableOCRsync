@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import boto3
 import sys
+import os
 
 SMALL_FILE_BYTES = 50000
 
@@ -28,11 +29,18 @@ textract = boto3.client('textract')
 # Call Amazon Textract
 response = textract.detect_document_text(Document={'Bytes': imageBytes})
 
-try:
-    # Print detected text
-    with open(outputName, 'w') as output:
-        for item in response["Blocks"]:
-            if item["BlockType"] == "LINE":
-                print (item["Text"], file=output)
-except:
-    sys.exit(23)
+# Count total length of text
+alltext = ""
+for item in response["Blocks"]:
+    if item["BlockType"] == "LINE":
+        alltext = alltext + item["Text"] + os.linesep
+
+if len(alltext) > 0:
+    try:
+        # Print detected text
+        with open(outputName, 'w') as output:
+            print (alltext, file=output)
+    except:
+        sys.exit(23)
+else:
+    print("No text detected")

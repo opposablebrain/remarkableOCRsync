@@ -28,10 +28,25 @@ ECHO=$(which echo)
 
 mkdir -p $NBDIR $DATADIR $METADIR
 
-for nb in $(cat "$NBCONF"); do
-	echo $nb
-	$ECHO -n Connecting...
+if [ "$COMMITNEW" = true ]; then
+	echo "=========="
+	$ECHO -n Pulling remote...
+	if git pull; then
+		echo "success."
+	else
+		echo "failed. Aborting."
+		exit 16
+	fi
+fi
 
+for nb in $(cat "$NBCONF"); do
+	echo "=========="
+	echo
+	echo
+	echo "=========="
+	echo $nb
+
+	$ECHO -n Connecting...
 	if timeout 1s ssh $RMHOST "true";then
 		echo "success."
 	else
@@ -40,6 +55,8 @@ for nb in $(cat "$NBCONF"); do
 	fi 
 
 	nbname=$(ssh $RMHOST "cat $RMPATH/$nb.metadata" |jq -r .visibleName)
+	echo $nbname
+	echo "----------"
 	
 	$ECHO -n "Syncing..."
 	if rsync $RSYNCARGS -nq "$RMHOST:$RMPATH/$nb*" "$DATADIR/$nbname"; then 
@@ -93,6 +110,7 @@ for nb in $(cat "$NBCONF"); do
 		echo "Error inspecting $nbname indices. Aborting.";
 		exit 11
 	fi
+
 	if ls "$NBDIR/$nbname"_pages/page-*.png 1> /dev/null 2>&1; then
 		echo "OCR..."
 		for ki in "$NBDIR/$nbname"_pages/page-*.png; do 
@@ -106,23 +124,34 @@ for nb in $(cat "$NBCONF"); do
 			fi
 		done
 	fi
+
+	echo "Annotating PDF..."
+	if ./annotatePDF.py "$NBDIR/$nbname";then
+		echo "success."
+	else
+		echo "failed. Aborting"
+		exit 18
+	fi
+
 	echo "Cleaning up"
 	rm -f "$NBDIR/$nbname"_pages/page-*.png
 	mv "$METADIR/$nbname"_index_new.json "$METADIR/$nbname"_index.json
 	mv "$METADIR/$nbname"_hashes_new.json "$METADIR/$nbname"_hashes.json
 	
 	if [ "$COMMITNEW" = true ]; then
-		# check if need to commit
+		# check if we need to commit anything
 		if [[ -z $(git status -s) ]];then
 			echo No changes
 		else 
 			echo "Committing changes"
 			git pull
-			git add notebooks
-			git add meta
+			git add $NBDIR
+			git add $METADIR
 			git status --porcelain
-			git commit -qam "$(date)"
+			msg=$(git status --porcelain|tr -s '\n' ' ')
+			git commit -qam "$msg"
 			git push -q
 		fi
 	fi
 done
+echo "=========="

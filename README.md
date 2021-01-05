@@ -13,7 +13,7 @@ If you like it, help me make it better.
 
 # Requirements
 * `[brew/apt/dnf] install imagemagick jq awscli`
-* `pip install boto3`
+* `pip install boto3 pypdf2`
 * [rm2pdf][1] built and installed in your path
 
 [1]: https://github.com/rorycl/rm2pdf.git "rm2pdf @ github"
@@ -44,4 +44,4 @@ If you like it, help me make it better.
 # Usage
 From the repo folder, update the notebook list per the above instructions and try running `./rmocrsync.sh` It _should_ work out of the box. 
 
-If it completes successfully, take a look in the `notebooks` folder.
+If it completes successfully, take a look in the `notebooks` folder. You should have a PDF of your notebook, a folder of OCR text files (one file per page), and an annotated PDF that embeds the text in each page. 
