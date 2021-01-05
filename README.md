@@ -3,10 +3,14 @@ A quick hack for syncing notebooks off the Remarkable (direct USB transfer), con
 
 Loosely tested on Linux and OSX(intel).
 
+I admit this is not entirely end-user-friendly. If you know your way around a Unix shell, you should be ok.
+
 I wrote this in an evening and don't have the time to support it properly.
 If you like it, help me make it better.
 
-I admit this is not entirely end-user-friendly. If you know your way around a Unix shell, you should be ok.
+# OCR Demo
+![RM page](page-4.png)
+![OCR text](page-4-txt.png)
 
 # Requirements
 * `[brew/apt/dnf] install imagemagick jq awscli`
