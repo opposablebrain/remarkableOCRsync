@@ -37,4 +37,6 @@ If you like it, help me make it better.
 [3]: https://github.com/lucasrla/remarkable-utils "Remarkable Utils"
 
 # Usage
-From the repo folder, try running `./rmocrsync.sh` It might work out of the box. Good luck.
+From the repo folder, update the notebook list per the above instructions and try running `./rmocrsync.sh` It _should_ work out of the box. 
+
+If it completes successfully, take a look in the `notebooks` folder.
