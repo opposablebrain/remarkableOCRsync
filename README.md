@@ -19,7 +19,7 @@ If you like it, help me make it better.
 [1]: https://github.com/rorycl/rm2pdf.git "rm2pdf @ github"
 
 # Setup
-* `aws configure` [this may help][2]
+* `aws configure` [this may help][2] (also look at [pricing][4] for OCR)
 * [Set up ssh and rsync on your tablet][3]
     - Example `.ssh/config` section:
     ```
@@ -40,6 +40,8 @@ If you like it, help me make it better.
 [2]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-config "AWS CLI Setup"
 
 [3]: https://github.com/lucasrla/remarkable-utils "Remarkable Utils"
+
+[4]: https://aws.amazon.com/textract/pricing/ "AWS Textract Pricing"
 
 # Usage
 From the repo folder, update the notebook list per the above instructions and try running `./rmocrsync.sh` It _should_ work out of the box. 
