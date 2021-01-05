@@ -10,6 +10,7 @@ If you like it, help me make it better.
 * `[brew/apt/dnf] install imagemagick jq awscli`
 * `pip install boto3`
 * [rm2pdf][1] built and installed in your path
+
 [1]: https://github.com/rorycl/rm2pdf.git "rm2pdf @ github"
 
 # Setup
