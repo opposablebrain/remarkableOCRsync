@@ -5,13 +5,13 @@ NBDIR=notebooks
 DATADIR=rmdata
 METADIR=meta
 
-# This where you put the hashes of the RM notebooks, one per line
+# This is the file where you put the hashes of the RM notebooks, one per line (see README)
 NBCONF=notebooks.conf
 
 # Whatever your remarkable is named in .ssh/config (or use the IP)
 RMHOST=rm
 
-# Where your content is stored under the root HOME folder
+# Where your content is stored on the tablet, under the root HOME folder
 # This should be /home/root/.local/share/remarkable/xochitl; I soft link that to ~/content
 RMPATH=content
 
