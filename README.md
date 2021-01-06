@@ -20,14 +20,14 @@ If you like it, help me make it better.
 * [Set up ssh and rsync on your tablet][3]
     - Example `.ssh/config` section:
     ```
-    Host rm
+    Host remarkable
     User root
     ControlMaster no
     ControlPath none
     Hostname 10.11.99.1
     ```
 * SSH to the tablet and find the hashes of the notebooks you want to sync
-    -  `ssh root@10.11.99.1`
+    -  `ssh remarkable`
     -  `ln -s ~/.local/share/remarkable/xochitl ~/content` <- for convenience
     -  `cd content`
     -  `grep [notebook_name] *.metadata|cut -f1 -d '.'` <- start here, then look at the metadata file to confirm
