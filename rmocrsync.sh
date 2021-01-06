@@ -114,7 +114,7 @@ for nb in $(cat "$NBCONF"); do
 	if ls "$NBDIR/$nbname"_pages/page-*.png 1> /dev/null 2>&1; then
 		echo "OCR..."
 		for ki in "$NBDIR/$nbname"_pages/page-*.png; do 
-			$ECHO -n "   >$ki"...;
+			$ECHO -n "   >${ki%.png}.txt"...;
 			if ./textract.py "$ki" "${ki%.png}.txt";then
 				echo success.
 			else
