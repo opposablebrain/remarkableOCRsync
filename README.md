@@ -8,9 +8,6 @@ I admit this is not entirely end-user-friendly. If you know your way around a Un
 I wrote this in an evening and don't have the time to support it properly.
 If you like it, help me make it better.
 
-# OCR Demo
-![OCR text](ocr.png)
-
 # Requirements
 * `[brew/apt/dnf] install imagemagick jq awscli`
 * `pip install boto3 pypdf2`
@@ -47,3 +44,8 @@ If you like it, help me make it better.
 From the repo folder, update the notebook list per the above instructions and try running `./rmocrsync.sh` It _should_ work out of the box. 
 
 If it completes successfully, take a look in the `notebooks` folder. You should have a PDF of your notebook, a folder of OCR text files (one file per page), and an annotated PDF that embeds the text in each page. 
+
+# Demo
+![OCR text](_assets/demo.gif)
+## OCR Example
+![OCR text](_assets/ocr.png)
