@@ -44,3 +44,4 @@ if len(alltext) > 0:
         sys.exit(23)
 else:
     print("No text detected")
+    os.remove(outputName) 
