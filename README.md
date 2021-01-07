@@ -66,7 +66,7 @@ From the repo folder, update the notebook list per the above instructions and tr
 
 If it completes successfully, take a look in the `notebooks` folder. You should have a folder of OCR text files (one file per page), and an annotated PDF that embeds the text in each page. 
 
-# Demo (of a slightly older version)
+# Demo (of an older version)
 ![OCR text](_assets/demo.gif)
 ## OCR Example
 ![OCR text](_assets/ocr.png)
