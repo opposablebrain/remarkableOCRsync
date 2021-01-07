@@ -20,7 +20,7 @@ with open(documentName, 'rb') as document:
     imageBytes = bytearray(document.read())
 
 if len(imageBytes) < SMALL_FILE_BYTES:
-    print ("Input file seems too small to bother")
+    print ("input file seems too small to bother...",end='')
     sys.exit(0)
 
 # Amazon Textract client
@@ -43,5 +43,8 @@ if len(alltext) > 0:
     except:
         sys.exit(23)
 else:
-    print("No text detected")
-    os.remove(outputName) 
+    print("no text detected...",end='')
+    try:
+        os.remove(outputName) 
+    except:
+        print(".x.",end='')

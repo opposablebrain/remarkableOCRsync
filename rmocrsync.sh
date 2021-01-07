@@ -1,15 +1,31 @@
 #!/usr/bin/env sh
 
+if (( $# == 1 )); then
+	if [ "$1" == "web" ];then
+		WEBSYNC=true
+	elif [ "$1" == "ssh" ]; then
+		WEBSYNC=false
+	fi
+else
+	echo "Usage:"
+	echo "$0 [web|ssh]"
+	exit 255
+fi
+
 # These are arbitrary. Pick what you like.
 NBDIR=notebooks
 DATADIR=rmdata
 METADIR=meta
 
+
 # This is the file where you put the hashes of the RM notebooks, one per line (see README)
 NBCONF=notebooks.conf
 
+# A dictionary of notebook UUIDs and names
+NBDICT=nbdict.dat
+
 # Whatever your remarkable is named in .ssh/config (or use the IP)
-RMHOST=rm
+RMHOST=remarkable
 
 # Where your content is stored on the tablet, under the root HOME folder
 # This should be /home/root/.local/share/remarkable/xochitl; I soft link that to ~/content
@@ -19,8 +35,12 @@ RMPATH=content
 # Obviously, you should only do this in your own repo
 COMMITNEW=false
 
+# A temp folder
+TMPDIR=tmp
+
 # You can prolly leave these alone
-RSYNCARGS="-uav --delete --exclude=*.thumbnails --exclude=*.textconversion --rsync-path=/opt/bin/rsync"
+RSYNCARGS="-rc --delete --exclude=*.thumbnails --exclude=*.textconversion"
+RSYNCARGS_SSH="--rsync-path=/opt/bin/rsync"
 PGFMT="Letter"
 
 # Eh, on some systems the shell builtin doesn't support advanced options. This is a quick workaround.
@@ -46,27 +66,62 @@ for nb in $(cat "$NBCONF"); do
 	echo "=========="
 	echo $nb
 
-	$ECHO -n Connecting...
-	if timeout 1s ssh $RMHOST "true";then
-		echo "success."
+	# get the notebook name
+	$ECHO -n "Finding notebook name for $nb..."
+	if nbname=$(./bin/getnbname.sh "$nb" "$NBDICT");then
+		echo "$nbname"
 	else
-		echo "failed. Aborting."
-		exit 15
-	fi 
+		$ECHO -n "not found..."
+		if [ "$WEBSYNC" = true ]; then
+			$ECHO -n "generating a (temp) random one..."
+			if nbname=$(./bin/namegen.sh);then
+				echo "$nbname"
+			else
+				echo "failed. Aborting."
+				exit 19
+			fi
+		else
+			$ECHO -n "fetching from device..."
+			if ! timeout 1s ssh $RMHOST "true";then
+				echo "failed to usb-connect. Aborting."
+				exit 15
+			fi 
 
-	nbname=$(ssh $RMHOST "cat $RMPATH/$nb.metadata" |jq -r .visibleName)
-	echo $nbname
+			if nbname=$(timeout 1s ssh $RMHOST "cat $RMPATH/$nb.metadata" |jq -r .visibleName);then
+				echo "$nbname"
+			fi
+		fi
+		echo "$nb,$nbname" >> "$NBDICT"
+	fi
+
 	echo "----------"
 	
 	$ECHO -n "Syncing..."
-	if rsync $RSYNCARGS -nq "$RMHOST:$RMPATH/$nb*" "$DATADIR/$nbname"; then 
-		numtxfr=$(rsync $RSYNCARGS --stats "$RMHOST:$RMPATH/$nb*" "$DATADIR/$nbname"|grep "files transferred"|sed "s/[^[:digit:]]//g")
-		echo success. "$numtxfr" files received.
+	if [ "$WEBSYNC" = true ]; then
+		if ! ./bin/fetchweb.sh "$nb" "$TMPDIR"; then
+			echo "failed to fetch via web interface. Aborting."
+			rm -rf "$TMPDIR"
+			exit 20 
+		fi
+		if rsync $RSYNCARGS -nq "$TMPDIR/"* "$DATADIR/$nbname/"; then
+			numtxfr=$(rsync $RSYNCARGS --stats "$TMPDIR/" "$DATADIR/$nbname/"|grep "files transferred"|sed "s/[^[:digit:]]//g")
+			echo success. "$numtxfr" files received.
+			./bin/genmetadata.sh "$nbname" > "$DATADIR/$nbname/$nb.metadata" # awful. just awful
+			rm -rf "$TMPDIR"
+		else
+			echo "failed. Aborting."
+			rm -rf "$TMPDIR"
+			exit 13
+		fi		
 	else
-		echo "failed. Aborting."
-		exit 13
+		if rsync $RSYNCARGS $RSYNCARGS_SSH -nq "$RMHOST:$RMPATH/$nb*" "$DATADIR/$nbname"; then 
+			numtxfr=$(rsync $RSYNCARGS $RSYNCARGS_SSH --stats "$RMHOST:$RMPATH/$nb*" "$DATADIR/$nbname"|grep "files transferred"|sed "s/[^[:digit:]]//g")
+			echo success. "$numtxfr" files received.
+		else
+			echo "failed. Aborting."
+			exit 13
+		fi
 	fi
-
 	
 	if [ $numtxfr -eq 0 ];then
 		echo No updates. Next notebook...
@@ -78,13 +133,17 @@ for nb in $(cat "$NBCONF"); do
 	if rm2pdf -t template.pdf "$DATADIR/$nbname"/$nb "$NBDIR/$nbname.pdf";then
 		echo success.
 		rm template.pdf
+		if [ "$WEBSYNC" = true ]; then
+			rm "$DATADIR/$nbname/$nb.metadata" # still terrible
+		fi
 	else
 		echo "failed. Aborting."
 		exit 14
 	fi	
 	
+
 	$ECHO -n "Updating page checksums..."
-	if ./checksums.py "$METADIR" "$DATADIR" "$nbname" "$nb" "_new"; then
+	if ./bin/checksums.py "$METADIR" "$DATADIR" "$nbname" "$nb" "_new"; then
 		echo success.
 	else
 		echo $?
@@ -94,8 +153,8 @@ for nb in $(cat "$NBCONF"); do
 	
 	echo "Extracting new or updated pages..."
 	mkdir -p "$NBDIR/$nbname"_pages
-	if ./findnew.py "$nbname" > /dev/null;then 
-		for ki in $(./findnew.py "$nbname");do 
+	if ./bin/findnew.py "$nbname" > /dev/null;then 
+		for ki in $(./bin/findnew.py "$nbname");do 
 			$ECHO -En "   >page-$ki"...
 			pagepath="$NBDIR/$nbname"_pages/"page-$ki.png"
 			if convert -density 800 -define profile:skip=ICC "$NBDIR/$nbname.pdf[$ki]" -background white -alpha remove "$pagepath"; then
@@ -115,7 +174,7 @@ for nb in $(cat "$NBCONF"); do
 		echo "OCR..."
 		for ki in "$NBDIR/$nbname"_pages/page-*.png; do 
 			$ECHO -n "   >${ki%.png}.txt"...;
-			if ./textract.py "$ki" "${ki%.png}.txt";then
+			if ./bin/textract.py "$ki" "${ki%.png}.txt";then
 				echo success.
 			else
 				echo $?
@@ -126,8 +185,9 @@ for nb in $(cat "$NBCONF"); do
 	fi
 
 	echo "Annotating PDF..."
-	if ./annotatePDF.py "$NBDIR/$nbname";then
+	if ./bin/annotatePDF.py "$NBDIR/$nbname";then
 		echo "success."
+		mv "$NBDIR/$nbname"_annotated.pdf "$NBDIR/$nbname.pdf"
 	else
 		echo "failed. Aborting"
 		exit 18
