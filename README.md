@@ -11,7 +11,7 @@ I wrote this in a couple of evenings and don't have the time to support it prope
 * `[brew/apt/dnf] install imagemagick jq awscli composer`
 * `pip install boto3 pypdf2`
 * [rm2pdf][1] built and installed in your path
-* *I've pulled [RemarkableAPI][5] directly into this repo since it's not a standalone app.* Thanks to [splitbrain](https://github.com/splitbrain).
+* [RemarkableAPI][5] and see below
 
 [5]: https://github.com/splitbrain/ReMarkableAPI "RemarkableAPI @ github"
 
@@ -22,9 +22,9 @@ I wrote this in a couple of evenings and don't have the time to support it prope
 `aws configure` [this may help][2] (also look at [pricing][4] for OCR)
 
 ## For Web API sync
-If you are only doing SSH-over-USB, you can skip this.
-
-`composer install` [from instructions at RemarkableAPI][5]
+* clone [RemarkableAPI][5]
+* copy the folder `src`, and the files `composer.json` and `remarkable.php` into this folder.
+* run `composer install` and maybe look at the [instructions][5]. You need to authorize RemarkableAPI to interact with your reMarkable account.
 
 ## For SSH-over-USB sync
 [Set up passwordless ssh and rsync on your tablet][3]
@@ -41,12 +41,16 @@ Example `.ssh/config` section:
 ## Notebook UUIDs
 Each reMarkable notebook is identified by a hexadecimal UUID. You need to find the UUIDs of the notebooks you want synced and add them to `notebooks.conf`
 
-* SSH to the tablet and find the hashes of the notebooks you want to sync
-    -  `ssh remarkable`
-    -  `ln -s ~/.local/share/remarkable/xochitl ~/content` <- for convenience
-    -  `cd content`
-    -  `grep [notebook_name] *.metadata|cut -f1 -d '.'` <- start here, then look at the metadata file to confirm
-* Back on the mainland, add the notebook hashes to `notebooks.conf`, one per line
+*  `ssh remarkable`
+*  `ln -s ~/.local/share/remarkable/xochitl ~/content` <- for convenience
+*  `cd content`
+*  `grep [notebook_name] *.metadata|cut -f1 -d '.'` <- start here, then look at the metadata file to confirm
+
+Back on the mainland, add the notebook hashes to `notebooks.conf`, one per line, like so:
+    ```
+    abcdef28-b5f0-4866-a35a-1257d7abcdef
+    abcdef78-76e5-4236-a3db-5140ecabcdef
+    ```
 
 ## Optional
 Check the config variables at top of `rmocrsync.sh`
@@ -62,7 +66,7 @@ From the repo folder, update the notebook list per the above instructions and tr
 
 If it completes successfully, take a look in the `notebooks` folder. You should have a folder of OCR text files (one file per page), and an annotated PDF that embeds the text in each page. 
 
-# Demo (of a slightly earlier version)
+# Demo (of a slightly older version)
 ![OCR text](_assets/demo.gif)
 ## OCR Example
 ![OCR text](_assets/ocr.png)
