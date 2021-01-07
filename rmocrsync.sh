@@ -20,7 +20,7 @@ RMPATH=content
 COMMITNEW=false
 
 # You can prolly leave these alone
-RSYNCARGS="-uav --delete --exclude=*.thumbnails --exclude=*.textconversion --rsync-path=/opt/bin/rsync"
+RSYNCARGS="-rc --delete --exclude=*.thumbnails --exclude=*.textconversion --rsync-path=/opt/bin/rsync"
 PGFMT="Letter"
 
 # Eh, on some systems the shell builtin doesn't support advanced options. This is a quick workaround.
