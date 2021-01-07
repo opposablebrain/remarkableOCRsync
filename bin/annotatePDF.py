@@ -32,7 +32,7 @@ for pageno in range(pdfInput.numPages):
 	if os.path.exists(notefile):
 		try:
 			with open(notefile) as f:
-			    notes = " ".join(line.strip() for line in f)
+			    notes = "\n".join(line.strip() for line in f)
 		except:
 			print('Found but could not open annotation file for page ' + str(pageno))
 			sys.exit(20)
