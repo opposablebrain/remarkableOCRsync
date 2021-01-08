@@ -1,7 +1,7 @@
-# Remarkable tablet sync and page OCR
-A quick hack for syncing notebooks off the Remarkable (direct USB transfer), converting them to PDF form, and running OCR on the pages. Attempts to only convert changed pages. Uses AWS textract for OCR.
+# reMarkable tablet sync and page OCR
+A quick hack for syncing notebooks off the reMarkable, converting them to PDF form, and running OCR on the pages. Attempts to only convert changed pages. Uses AWS textract for OCR. Syncs with SSH-over-USB. To sync from cloud, check the `dev/webapi` branch. Only syncs one-way: down.
 
-Loosely tested on Linux and OSX(intel).
+Loosely tested with a reMarkable2 on Linux and OSX(intel).
 
 I admit this is not entirely end-user-friendly. If you know your way around a Unix shell, you should be ok.
 
@@ -31,7 +31,11 @@ If you like it, help me make it better.
     -  `ln -s ~/.local/share/remarkable/xochitl ~/content` <- for convenience
     -  `cd content`
     -  `grep [notebook_name] *.metadata|cut -f1 -d '.'` <- start here, then look at the metadata file to confirm
-* Back on the mainland, add the notebook hashes to `notebooks.conf`, one per line
+* Back on the mainland, add the notebook hashes to `notebooks.conf`, one per line, like so:
+    ```
+    abcdef28-b5f0-4866-a35a-1257d7abcdef
+    abcdef78-76e5-4236-a3db-5140ecabcdef
+    ```
 * Check the config variables at top of `rmocrsync.sh`
 
 [2]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-config "AWS CLI Setup"
