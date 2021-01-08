@@ -5,21 +5,19 @@ import sys
 import os.path
 
 
-if len(sys.argv) > 4:
+if len(sys.argv) > 3:
 	METADIR = sys.argv[1]
 	RMDIR = sys.argv[2]
-	nbname = sys.argv[3]
-	nb = sys.argv[4]
+	nb = sys.argv[3]
 else:
-	print("Usage:\n"+sys.argv[0]+" notebook_name notebook_hash [output_suffix]")
 	sys.exit(13)
 
-if len(sys.argv) > 5:
-	suffix = sys.argv[5]
+if len(sys.argv) > 4:
+	suffix = sys.argv[4]
 else:
 	suffix = "";
 
-DIR = os.path.join(RMDIR,nbname,nb)
+DIR = os.path.join(RMDIR,nb,nb)
 
 input_file = open(DIR+".content")
 json_array = json.load(input_file)
@@ -34,10 +32,10 @@ for pp in range(len(pages)):
 	idxdict[pages[pp]] = pp
 
 try:
-	with open(os.path.join(METADIR,nbname+"_index" + suffix + ".json"), 'w') as out:
+	with open(os.path.join(METADIR,nb+"_index" + suffix + ".json"), 'w') as out:
 		print(json.dumps(idxdict, indent = 2), file=out)
 
-	with open(os.path.join(METADIR+"/"+nbname+"_hashes" + suffix + ".json"), 'w') as out:
+	with open(os.path.join(METADIR+"/"+nb+"_hashes" + suffix + ".json"), 'w') as out:
 		print(json.dumps(hashdict, indent = 2), file=out)
 
 except:

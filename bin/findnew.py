@@ -6,12 +6,12 @@ import os.path
 METADIR = "meta"
 
 if len(sys.argv) > 1:
-	nbname = sys.argv[1]
+	nb = sys.argv[1]
 else:
-	print("Usage:\n"+sys.argv[0]+" notebook_name")
+	print("Usage:\n"+sys.argv[0]+" notebook_uuid")
 	sys.exit(13)
 
-prefix = os.path.join(METADIR,nbname)
+prefix = os.path.join(METADIR,nb)
 
 BOOTSTRAP = False
 if not os.path.isfile(prefix+"_hashes.json"):
@@ -39,7 +39,7 @@ if not BOOTSTRAP:
 			reidx = True
 
 	if reidx:
-		print("Error: page order changed for "+nbname)
+		print("Error: page order changed for "+nb)
 		sys.exit(10)
 
 if BOOTSTRAP:

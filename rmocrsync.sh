@@ -103,10 +103,10 @@ for nb in $(cat "$NBCONF"); do
 			rm -rf "$TMPDIR"
 			exit 20 
 		fi
-		if rsync $RSYNCARGS -nq "$TMPDIR/"* "$DATADIR/$nbname/"; then
-			numtxfr=$(rsync $RSYNCARGS --stats "$TMPDIR/" "$DATADIR/$nbname/"|grep "files transferred"|sed "s/[^[:digit:]]//g")
+		if rsync $RSYNCARGS -nq "$TMPDIR/"* "$DATADIR/$nb/"; then
+			numtxfr=$(rsync $RSYNCARGS --stats "$TMPDIR/" "$DATADIR/$nb/"|grep "files transferred"|sed "s/[^[:digit:]]//g")
 			echo success. "$numtxfr" files received.
-			./bin/genmetadata.sh "$nbname" > "$DATADIR/$nbname/$nb.metadata" # awful. just awful
+			./bin/genmetadata.sh "$nbname" > "$DATADIR/$nb/$nb.metadata" # awful. just awful
 			rm -rf "$TMPDIR"
 		else
 			echo "failed. Aborting."
@@ -114,8 +114,8 @@ for nb in $(cat "$NBCONF"); do
 			exit 13
 		fi		
 	else
-		if rsync $RSYNCARGS $RSYNCARGS_SSH -nq "$RMHOST:$RMPATH/$nb*" "$DATADIR/$nbname"; then 
-			numtxfr=$(rsync $RSYNCARGS $RSYNCARGS_SSH --stats "$RMHOST:$RMPATH/$nb*" "$DATADIR/$nbname"|grep "files transferred"|sed "s/[^[:digit:]]//g")
+		if rsync $RSYNCARGS $RSYNCARGS_SSH -nq "$RMHOST:$RMPATH/$nb*" "$DATADIR/$nb"; then 
+			numtxfr=$(rsync $RSYNCARGS $RSYNCARGS_SSH --stats "$RMHOST:$RMPATH/$nb*" "$DATADIR/$nb"|grep "files transferred"|sed "s/[^[:digit:]]//g")
 			echo success. "$numtxfr" files received.
 		else
 			echo "failed. Aborting."
@@ -130,11 +130,11 @@ for nb in $(cat "$NBCONF"); do
 
 	$ECHO -n "Converting to PDF..."
 	convert xc:none -page "$PGFMT" template.pdf
-	if rm2pdf -t template.pdf "$DATADIR/$nbname"/$nb "$NBDIR/$nbname.pdf";then
+	if rm2pdf -t template.pdf "$DATADIR/$nb"/$nb "$NBDIR/$nbname.pdf";then
 		echo success.
 		rm template.pdf
 		if [ "$WEBSYNC" = true ]; then
-			rm "$DATADIR/$nbname/$nb.metadata" # still terrible
+			rm "$DATADIR/$nb/$nb.metadata" # still terrible
 		fi
 	else
 		echo "failed. Aborting."
@@ -143,7 +143,7 @@ for nb in $(cat "$NBCONF"); do
 	
 
 	$ECHO -n "Updating page checksums..."
-	if ./bin/checksums.py "$METADIR" "$DATADIR" "$nbname" "$nb" "_new"; then
+	if ./bin/checksums.py "$METADIR" "$DATADIR" "$nb" "_new"; then
 		echo success.
 	else
 		echo $?
@@ -153,8 +153,8 @@ for nb in $(cat "$NBCONF"); do
 	
 	echo "Extracting new or updated pages..."
 	mkdir -p "$NBDIR/$nbname"_pages
-	if ./bin/findnew.py "$nbname" > /dev/null;then 
-		for ki in $(./bin/findnew.py "$nbname");do 
+	if ./bin/findnew.py "$nb" > /dev/null;then 
+		for ki in $(./bin/findnew.py "$nb");do 
 			$ECHO -En "   >page-$ki"...
 			pagepath="$NBDIR/$nbname"_pages/"page-$ki.png"
 			if convert -density 800 -define profile:skip=ICC "$NBDIR/$nbname.pdf[$ki]" -background white -alpha remove "$pagepath"; then
@@ -195,8 +195,8 @@ for nb in $(cat "$NBCONF"); do
 
 	echo "Cleaning up"
 	rm -f "$NBDIR/$nbname"_pages/page-*.png
-	mv "$METADIR/$nbname"_index_new.json "$METADIR/$nbname"_index.json
-	mv "$METADIR/$nbname"_hashes_new.json "$METADIR/$nbname"_hashes.json
+	mv "$METADIR/$nb"_index_new.json "$METADIR/$nb"_index.json
+	mv "$METADIR/$nb"_hashes_new.json "$METADIR/$nb"_hashes.json
 	
 	if [ "$COMMITNEW" = true ]; then
 		# check if we need to commit anything

@@ -1,9 +1,5 @@
 # reMarkable tablet sync and page OCR
-<<<<<<< HEAD
-A quick hack for syncing notebooks off the reMarkable, converting them to PDF form, and running OCR on the pages. Attempts to only convert changed pages. Uses AWS textract for OCR. Syncs with SSH-over-USB. To sync from cloud, check the `dev/webapi` branch. Only syncs one-way: down.
-=======
-A quick hack for syncing notebooks off the reMarkable, converting them to PDF form, and running OCR on the pages. Attempts to only convert changed pages. Uses AWS textract for OCR. Can sync from cloud using [RemarkableAPI][5] or directly with SSH-over-USB. Switches seamlessly between the two sync mechanisms. Only syncs one-way: down.
->>>>>>> dev/webapi
+A moderate hack for syncing notebooks off the reMarkable, converting them to PDF form, and running OCR on the pages. Attempts to only convert changed pages. Uses AWS textract for OCR. Can sync from cloud using [RemarkableAPI][5] or directly with SSH-over-USB. Switches seamlessly between the two sync mechanisms. Only syncs one-way: down.
 
 Loosely tested with a reMarkable2 on Linux and OSX(intel).
 
@@ -59,13 +55,9 @@ Back on the mainland, add the notebook hashes to `notebooks.conf`, one per line,
     abcdef28-b5f0-4866-a35a-1257d7abcdef
     abcdef78-76e5-4236-a3db-5140ecabcdef
     ```
-<<<<<<< HEAD
-* Check the config variables at top of `rmocrsync.sh`
-=======
 
 ## Optional
 Check the config variables at top of `rmocrsync.sh` and try not to break anything.
->>>>>>> dev/webapi
 
 [2]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-config "AWS CLI Setup"
 
@@ -78,7 +70,9 @@ From the repo folder, update the notebook list per the above instructions and tr
 
 If it completes successfully, take a look in the `notebooks` folder. You should have a folder of OCR text files (one file per page), and an annotated PDF that embeds the text in each page.
 
-Note: when cloud-syncing, the script can't get the notebook names, so it will generate random ones. You can avoid that by starting with an SSH sync. After the script runs once, look inside `nbdict.dat` to modify the names.
+_Note: The files in the `meta` folder are used to track changed pages across sync sessions. You probably shouldn't mess with these._
+
+_Note: When cloud-syncing, the script can't get the notebook names, so it will generate random ones. You can avoid that by starting with an SSH sync. After the script runs once, look inside `nbdict.dat` to modify the names._
 
 # Demo (of an older version)
 ![OCR text](_assets/demo.gif)
