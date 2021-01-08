@@ -21,6 +21,10 @@ with open(documentName, 'rb') as document:
 
 if len(imageBytes) < SMALL_FILE_BYTES:
     print ("input file seems too small to bother...",end='')
+    try:
+        os.remove(outputName) 
+    except:
+        print(".x.",end='')
     sys.exit(0)
 
 # Amazon Textract client
