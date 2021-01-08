@@ -31,6 +31,7 @@ You can skip this if you're only syncing over SSH.
 
 ## For SSH-over-USB sync (and to get notebook UUIDs)
 You can skip some of this if you're only syncing to cloud.
+
 [Set up passwordless ssh and rsync on your tablet][3]
 
 Example `.ssh/config` section:
