@@ -1,5 +1,5 @@
 # reMarkable tablet sync and page OCR
-A moderate hack for syncing notebooks off the reMarkable, converting them to PDF form, and running OCR on the pages. Attempts to only convert changed pages. Uses AWS textract for OCR. Can sync from cloud using [RemarkableAPI][5] or directly with SSH-over-USB. Switches seamlessly between the two sync mechanisms. Only syncs one-way: down.
+A moderate hack for syncing notebooks off the reMarkable, converting them to PDF form, and running OCR on the pages. Attempts to only convert changed pages. Uses AWS textract for OCR. Can sync from cloud using [rmapi][5] or directly with SSH-over-USB. Switches seamlessly between the two sync mechanisms. Only syncs one-way: down.
 
 Loosely tested with a reMarkable2 on Linux and OSX(intel).
 
@@ -8,13 +8,12 @@ I admit this is not entirely end-user-friendly. If you know your way around a Un
 I wrote this in a couple of evenings and don't have the time to support it properly. If you like it, help me make it better.
 
 # Requirements
-* `[brew/apt/dnf] install imagemagick jq awscli composer`
-* `[brew/apt/dnf] composer` <- for cloud sync only
+* `[brew/apt/dnf] install imagemagick jq awscli`
 * `pip install boto3 pypdf2`
 * [rm2pdf][1] built and installed in your path
-* [RemarkableAPI][5] and see below
+* [rmapi][5] built and installed in your path
 
-[5]: https://github.com/splitbrain/ReMarkableAPI "RemarkableAPI @ github"
+[5]: https://github.com/juruen/rmapi "rmapi @ github"
 
 [1]: https://github.com/rorycl/rm2pdf.git "rm2pdf @ github"
 
@@ -23,15 +22,9 @@ I wrote this in a couple of evenings and don't have the time to support it prope
 `aws configure` [this may help][2] (also look at [pricing][4] for OCR)
 
 ## For Web API sync
-You can skip this if you're only syncing over SSH.
-
-* clone [RemarkableAPI][5] somewhere
-* from there, copy the folder `src`, and the files `composer.json` and `remarkable.php` into this folder.
-* run `composer install` and maybe look at the [instructions][5]. You need to [get an auth code](https://my.remarkable.com/connect/desktop) for RemarkableAPI to interact with your reMarkable account and run `./remarkable.php register [code]`
+The first time you run, the script will prompt you to get an authorization code from remarkable. That's all.
 
 ## For SSH-over-USB sync (and to get notebook UUIDs)
-You can skip some of this if you're only syncing to cloud.
-
 [Set up passwordless ssh and rsync on your tablet][3]
 
 Example `.ssh/config` section:
@@ -42,23 +35,14 @@ Example `.ssh/config` section:
     ControlPath none
     Hostname 10.11.99.1
     ```
-## Notebook UUIDs
-Each reMarkable notebook is identified by a hexadecimal UUID. You need to find the UUIDs of the notebooks you want synced. One way to do that:
-
-*  `ssh remarkable`
-*  `ln -s ~/.local/share/remarkable/xochitl ~/content` <- for convenience
-*  `cd content`
-*  `grep [notebook_name] *.metadata|cut -f1 -d '.'` <- start here, then look at the metadata file to confirm
-
-Back on the mainland, add the notebook hashes to `notebooks.conf`, one per line, like so:
-
+## Notebook Selection
+Enter the names of the notebooks you want to sync, exactly as shown on the device, in `notebooks.conf`. Make sure you **add a newline at the end of the file** or the last notebook won't be processed. Example:
     ```
-    abcdef28-b5f0-4866-a35a-1257d7abcdef
-    abcdef78-76e5-4236-a3db-5140ecabcdef
+    Quick sheets
+    My Other Notebook
+    Work Notes
+        ‎‎
     ```
-
-## Optional
-Check the config variables at top of `rmocrsync.sh` and try not to break anything.
 
 [2]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-config "AWS CLI Setup"
 
@@ -73,9 +57,5 @@ If it completes successfully, take a look in the `notebooks` folder. You should 
 
 _Note: The files in the `meta` folder are used to track changed pages across sync sessions. You probably shouldn't mess with these._
 
-_Note: When cloud-syncing, the script can't get the notebook names, so it will generate random ones. You can avoid that by starting with an SSH sync. After the script runs once, look inside `nbdict.dat` to modify the names._
-
-# Demo (of an older version)
-![OCR text](_assets/demo.gif)
 ## OCR Example
 ![OCR text](_assets/ocr.png)

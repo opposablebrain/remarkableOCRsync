@@ -3,20 +3,21 @@
 # arg1 = notebook UUID
 # arg2 = dest folder
 if (( $# != 2 )); then
-    echo "Usage: $0 notebook_uuid dest_folder"
+    echo "Usage: $0 notebook_name dest_folder"
     exit 10
 fi
 
 ZIPDIR="$2"
-nb="$1"
+nbname="$1"
 zipdest="$ZIPDIR/$nb.zip"
 
 ECHO=$(which echo)
 
 mkdir -p "$ZIPDIR"
 
-$ECHO -n "Fetching notebook..."
-if ./remarkable.php download -u "$1" "$zipdest";then
+echo "Fetching notebook..."
+if rmapi get "$nbname";then
+	mv "$nbname.zip"  "$zipdest"
 	echo "success."
 else
 	echo "failed. Aborting."
@@ -31,6 +32,8 @@ else
 	echo "failed. Aborting."
 	exit 30
 fi
+
+nb=$(find "$ZIPDIR" -name "*.content"|cut -f1 -d '.'|sed 's/.*\///g')
 
 # The web interface is weird and sometimes just numbers the page files 0.rm, 1.rm, 2.rm instead of naming them [uuid].rm 
 # It also sometimes fails to provide metadata files for pages. Meh.

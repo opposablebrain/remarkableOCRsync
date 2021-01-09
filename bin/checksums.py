@@ -5,19 +5,20 @@ import sys
 import os.path
 
 
-if len(sys.argv) > 3:
+if len(sys.argv) > 4:
 	METADIR = sys.argv[1]
 	RMDIR = sys.argv[2]
-	nb = sys.argv[3]
+	nbname = sys.argv[3]
+	nb = sys.argv[4]
 else:
 	sys.exit(13)
 
-if len(sys.argv) > 4:
-	suffix = sys.argv[4]
+if len(sys.argv) > 5:
+	suffix = sys.argv[5]
 else:
 	suffix = "";
 
-DIR = os.path.join(RMDIR,nb,nb)
+DIR = os.path.join(RMDIR,nbname,nb)
 
 input_file = open(DIR+".content")
 json_array = json.load(input_file)
