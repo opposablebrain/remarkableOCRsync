@@ -31,14 +31,13 @@ The first time you run, the script will prompt you to get an authorization code 
 [Set up passwordless ssh and rsync on your tablet][3]
 
 Example `.ssh/config` section:
-
-    ```
+    
     Host remarkable
     User root
     ControlMaster no
     ControlPath none
     Hostname 10.11.99.1
-    ```
+
 
 ## Notebook Selection
 Enter the names of the notebooks you want to sync, exactly as shown on the device, in `notebooks.conf`. Make sure you **add a newline at the end of the file** or the last notebook won't be processed. Example:
