@@ -19,7 +19,10 @@ I wrote this in a couple of evenings and don't have the time to support it prope
 
 # Setup
 ## AWS Textract Handwriting Recognition
-`aws configure` [this may help][2] (also look at [pricing][4] for OCR)
+
+`aws configure` 
+
+[This may help][2] (also look at [pricing][4] for OCR)
 
 ## For Web API sync
 The first time you run, the script will prompt you to get an authorization code from remarkable. That's all.
@@ -28,6 +31,7 @@ The first time you run, the script will prompt you to get an authorization code 
 [Set up passwordless ssh and rsync on your tablet][3]
 
 Example `.ssh/config` section:
+
     ```
     Host remarkable
     User root
@@ -35,6 +39,7 @@ Example `.ssh/config` section:
     ControlPath none
     Hostname 10.11.99.1
     ```
+
 ## Notebook Selection
 Enter the names of the notebooks you want to sync, exactly as shown on the device, in `notebooks.conf`. Make sure you **add a newline at the end of the file** or the last notebook won't be processed. Example:
     ```
@@ -51,6 +56,7 @@ Enter the names of the notebooks you want to sync, exactly as shown on the devic
 [4]: https://aws.amazon.com/textract/pricing/ "AWS Textract Pricing"
 
 # Usage
+
 From the repo folder, update the notebook list per the above instructions and try running `./rmocrsync.sh ssh` or `./rmocrsync.sh web`. It _should_ work out of the box. 
 
 If it completes successfully, take a look in the `notebooks` folder. You should have a folder of OCR text files (one file per page), and an annotated PDF that embeds the text in each page.
