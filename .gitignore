@@ -1,4 +1,2 @@
 rmdata/
 __pycache__
-vendor
-auth.token
