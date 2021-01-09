@@ -42,12 +42,12 @@ Example `.ssh/config` section:
 
 ## Notebook Selection
 Enter the names of the notebooks you want to sync, exactly as shown on the device, in `notebooks.conf`. Make sure you **add a newline at the end of the file** or the last notebook won't be processed. Example:
-    ```
+    
     Quick sheets
     My Other Notebook
     Work Notes
         ‎‎
-    ```
+    
 
 [2]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-config "AWS CLI Setup"
 
