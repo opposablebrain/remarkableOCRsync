@@ -27,7 +27,7 @@ I wrote this in a couple of evenings and don't have the time to support it prope
 ## For Web API sync
 The first time you run, the script will prompt you to get an authorization code from remarkable. That's all.
 
-## For SSH-over-USB sync (and to get notebook UUIDs)
+## For SSH-over-USB sync
 [Set up passwordless ssh and rsync on your tablet][3]
 
 Example `.ssh/config` section:
