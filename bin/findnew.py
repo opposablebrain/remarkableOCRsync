@@ -18,6 +18,8 @@ if not os.path.isfile(prefix+"_hashes.json"):
     # Original hashes were not found, so we need to bootstrap
     BOOTSTRAP = True
 
+REIDX = False
+startReidx = -1
 
 #Don't worry about indices if we don't have a past reference file
 if not BOOTSTRAP:
@@ -28,24 +30,22 @@ if not BOOTSTRAP:
         print("Error: index file not found in "+prefix)
         sys.exit(11)
 
-    reidx = False
-    startReidx = -1
     for key in idxdict0.keys():
         if key in idxdictN:
             if idxdict0[key] != idxdictN[key]:
                 #print(str(idxdict0[key]) + " -> " + str(idxdictN[key]))
                 # Pages got renumbered
-                reidx = True
+                REIDX = True
                 startReidx = idxdict0[key] if idxdict0[key] < idxdictN[key] else idxdictN[key]
                 break
         else:
             #A page got deleted
-            reidx = True
+            REIDX = True
             startReidx = idxdict0[key]
             break
 
 
-if BOOTSTRAP or reidx:
+if BOOTSTRAP or REIDX:
     try:
         print
         idxdictN = json.load(open(prefix+"_index_new.json"))

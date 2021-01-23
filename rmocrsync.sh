@@ -139,7 +139,7 @@ while read -u 7 nbname; do
 		for ki in $(./bin/findnew.py "$nb");do 
 			$ECHO -En "   >page-$ki"...
 			pagepath="$NBDIR/$nbname"_pages/"page-$ki.png"
-			if convert -density 500 -define profile:skip=ICC "$NBDIR/$nbname.pdf[$ki]" -background white -alpha remove "$pagepath"; then
+			if convert -density 360 -define profile:skip=ICC "$NBDIR/$nbname.pdf[$ki]" -background white -alpha remove "$pagepath"; then
 				echo success.
 			else
 				echo "failed. Aborting."
@@ -180,7 +180,17 @@ while read -u 7 nbname; do
 	rm -f "$NBDIR/$nbname"_pages/page-*.png
 	mv "$METADIR/$nb"_index_new.json "$METADIR/$nb"_index.json
 	mv "$METADIR/$nb"_hashes_new.json "$METADIR/$nb"_hashes.json
+	# OK sometimes we delete pages and the old text files for the higher-numbered pages need to be deleted.
+	# This is a disgusting but simple way to do it
+	rmPages=$(ls "$DATADIR/$nbname/$nb/"*.rm|wc -l)
+	ocrPages=$(ls "$NBDIR/$nbname"_pages/*.txt|wc -l)
+	((ocrPages = ocrPages - 1))
+	for ki in $(seq $rmPages $ocrPages);do
+		echo Deleting stale file: "$NBDIR/$nbname"_pages/page-$ki.txt
+		rm -f "$NBDIR/$nbname"_pages/page-$ki.txt
+	done
 	
+
 	if [ "$COMMITNEW" = true ]; then
 		# check if we need to commit anything
 		if [[ -z $(git status -s) ]];then
