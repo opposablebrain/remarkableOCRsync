@@ -89,7 +89,7 @@ while read -u 7 nbname; do
 	else
 		# This part is a little fragile, since we're not parsing the JSON properly.
 		# Also if there are two documents (of any type) with the exact same name, you'll get errors
-		if nb=$(ssh rm "grep -r \"\\\"$nbname\\\"\" $RMPATH/*.metadata"|grep "\"visibleName\""|sed 's/.*\/\(.*\)\.metadata.*/\1/');then
+		if nb=$(ssh $RMHOST "grep -r \"\\\"$nbname\\\"\" $RMPATH/*.metadata"|grep "\"visibleName\""|sed 's/.*\/\(.*\)\.metadata.*/\1/');then
 			echo "UUID:$nb"
 		else
 			echo "failed. Aborting. Check that device is SSH-accessible."
@@ -209,3 +209,9 @@ while read -u 7 nbname; do
 done
 exec 7<&-
 echo "=========="
+if [ "$WEBSYNC" = false ]; then
+	echo "Backing up content folder"
+	# Technically, we want the --delete option here, but let's be conservative
+	rsync -ua $RSYNCARGS_SSH $RMHOST:/home/root/.local .
+	echo "Done"
+fi
